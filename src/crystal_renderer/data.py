@@ -5,17 +5,16 @@ modules, including colour schemes for crystallographic axes, elements, habits,
 and crystal system parameters.
 """
 
-from typing import Dict, List
 
 # Colour scheme for crystallographic axes
-AXIS_COLOURS: Dict[str, str] = {
+AXIS_COLOURS: dict[str, str] = {
     'a': '#E53935',  # Red
     'b': '#43A047',  # Green
     'c': '#1E88E5',  # Blue
 }
 
 # Element colours (subset of Jmol colours)
-ELEMENT_COLOURS: Dict[str, str] = {
+ELEMENT_COLOURS: dict[str, str] = {
     'C': '#909090',   # Carbon - grey
     'O': '#FF0D0D',   # Oxygen - red
     'Al': '#BFA6A6',  # Aluminium - pinkish grey
@@ -38,7 +37,7 @@ ELEMENT_COLOURS: Dict[str, str] = {
 }
 
 # Crystal system unit cells (for generic crystal system visualization)
-CRYSTAL_SYSTEMS: Dict[str, Dict[str, float]] = {
+CRYSTAL_SYSTEMS: dict[str, dict[str, float]] = {
     'cubic': {'a': 4.0, 'b': 4.0, 'c': 4.0, 'alpha': 90, 'beta': 90, 'gamma': 90},
     'tetragonal': {'a': 4.0, 'b': 4.0, 'c': 6.0, 'alpha': 90, 'beta': 90, 'gamma': 90},
     'orthorhombic': {'a': 4.0, 'b': 5.0, 'c': 6.0, 'alpha': 90, 'beta': 90, 'gamma': 90},
@@ -49,7 +48,7 @@ CRYSTAL_SYSTEMS: Dict[str, Dict[str, float]] = {
 }
 
 # Habit face colours by crystal system
-HABIT_COLOURS: Dict[str, Dict[str, str]] = {
+HABIT_COLOURS: dict[str, dict[str, str]] = {
     'cubic': {'face': '#81D4FA', 'edge': '#0277BD'},       # Light blue
     'tetragonal': {'face': '#CE93D8', 'edge': '#7B1FA2'},  # Purple
     'hexagonal': {'face': '#A5D6A7', 'edge': '#388E3C'},   # Green
@@ -60,7 +59,7 @@ HABIT_COLOURS: Dict[str, Dict[str, str]] = {
 }
 
 # Colors for different crystal forms (used with color_by_form)
-FORM_COLORS: List[Dict[str, str]] = [
+FORM_COLORS: list[dict[str, str]] = [
     {'face': '#81D4FA', 'edge': '#0277BD'},  # Form 0 - Light blue
     {'face': '#EF9A9A', 'edge': '#C62828'},  # Form 1 - Light red
     {'face': '#A5D6A7', 'edge': '#388E3C'},  # Form 2 - Light green
@@ -72,11 +71,11 @@ FORM_COLORS: List[Dict[str, str]] = [
 ]
 
 # Twin colour scheme (alternating colours for twin components)
-TWIN_COLOURS: List[Dict[str, str]] = [
+TWIN_COLOURS: list[dict[str, str]] = [
     {'face': '#81D4FA', 'edge': '#0277BD'},  # Light blue
     {'face': '#FFCC80', 'edge': '#EF6C00'},  # Orange
     {'face': '#A5D6A7', 'edge': '#388E3C'},  # Green
 ]
 
 # Cleavage plane colour
-CLEAVAGE_COLOUR: Dict[str, str] = {'face': '#FF5722', 'edge': '#BF360C'}
+CLEAVAGE_COLOUR: dict[str, str] = {'face': '#FF5722', 'edge': '#BF360C'}

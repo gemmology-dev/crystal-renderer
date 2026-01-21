@@ -6,13 +6,13 @@ for web, AR, and 3D viewer applications.
 
 import base64
 import json
-import struct
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any
+
 import numpy as np
 
 
-def triangulate_face(vertices: np.ndarray, face: List[int]) -> List[Tuple[int, int, int]]:
+def triangulate_face(vertices: np.ndarray, face: list[int]) -> list[tuple[int, int, int]]:
     """Triangulate a polygon face using fan triangulation.
 
     Args:
@@ -35,7 +35,7 @@ def triangulate_face(vertices: np.ndarray, face: List[int]) -> List[Tuple[int, i
 
 def calculate_vertex_normals(
     vertices: np.ndarray,
-    faces: List[List[int]]
+    faces: list[list[int]]
 ) -> np.ndarray:
     """Calculate per-vertex normals by averaging face normals.
 
@@ -75,10 +75,10 @@ def calculate_vertex_normals(
 
 def geometry_to_gltf(
     vertices: np.ndarray,
-    faces: List[List[int]],
-    color: Optional[Tuple[float, float, float, float]] = None,
+    faces: list[list[int]],
+    color: tuple[float, float, float, float] | None = None,
     name: str = "crystal"
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Convert crystal geometry to glTF format.
 
     Args:
@@ -214,9 +214,9 @@ def geometry_to_gltf(
 
 def export_gltf(
     vertices: np.ndarray,
-    faces: List[List[int]],
-    output_path: Union[str, Path],
-    color: Optional[Tuple[float, float, float, float]] = None,
+    faces: list[list[int]],
+    output_path: str | Path,
+    color: tuple[float, float, float, float] | None = None,
     name: str = "crystal"
 ) -> Path:
     """Export crystal geometry to a glTF file.

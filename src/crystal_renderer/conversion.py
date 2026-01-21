@@ -7,8 +7,8 @@ as well as 3D format exports (STL, glTF, GEMCAD).
 import io
 import os
 import tempfile
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Optional, Union
 
 # Check for optional dependencies
 try:
@@ -25,8 +25,8 @@ except ImportError:
 
 
 def convert_svg_to_raster(
-    svg_path: Union[str, Path],
-    output_path: Union[str, Path],
+    svg_path: str | Path,
+    output_path: str | Path,
     output_format: str = 'png',
     scale: float = 2.0,
     quality: int = 95
@@ -90,7 +90,7 @@ def convert_svg_to_raster(
 
 def generate_with_format(
     generator_func: Callable,
-    output_path: Union[str, Path],
+    output_path: str | Path,
     output_format: str = 'svg',
     scale: float = 2.0,
     quality: int = 95,

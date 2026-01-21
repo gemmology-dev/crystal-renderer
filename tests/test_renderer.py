@@ -4,7 +4,6 @@ Test suite for crystal-renderer.
 Tests rendering functions, format exports, and visualization.
 """
 
-import os
 import tempfile
 from pathlib import Path
 
@@ -15,27 +14,26 @@ from crystal_renderer import (
     # Constants
     AXIS_COLOURS,
     ELEMENT_COLOURS,
-    HABIT_COLOURS,
     FORM_COLORS,
+    HABIT_COLOURS,
+    blend_colors,
+    calculate_axis_origin,
+    calculate_bounding_box,
+    calculate_vertex_visibility,
     # Projection
     calculate_view_direction,
-    calculate_axis_origin,
-    calculate_vertex_visibility,
     cell_to_vectors,
-    calculate_bounding_box,
-    # Rendering helpers
-    get_element_colour,
-    blend_colors,
-    # Info panel
-    get_property_label,
-    format_property_value,
+    export_gltf,
     # Format exports
     export_stl,
-    geometry_to_stl,
-    export_gltf,
+    format_property_value,
     geometry_to_gltf,
+    geometry_to_stl,
+    # Rendering helpers
+    get_element_colour,
+    # Info panel
+    get_property_label,
 )
-
 
 # =============================================================================
 # Constants Tests

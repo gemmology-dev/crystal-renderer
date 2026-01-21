@@ -4,7 +4,7 @@ This module handles 3D to 2D projection calculations, view transformations,
 and visibility determination for crystal rendering.
 """
 
-from typing import List, Tuple
+
 import numpy as np
 
 
@@ -32,7 +32,7 @@ def calculate_axis_origin(
     elev: float = 30,
     azim: float = -45,
     offset_factor: float = 0.02
-) -> Tuple[np.ndarray, float]:
+) -> tuple[np.ndarray, float]:
     """Calculate axis placement for maximum crystal fill efficiency.
 
     Places axes at crystal corner with minimal clearance and adaptive length.
@@ -72,7 +72,7 @@ def calculate_axis_origin(
 
 def calculate_vertex_visibility(
     vertices: np.ndarray,
-    faces: List[List[int]],
+    faces: list[list[int]],
     elev: float,
     azim: float,
     threshold: float = 0.1
@@ -116,7 +116,7 @@ def calculate_vertex_visibility(
     return vertex_front_facing
 
 
-def calculate_face_normal(vertices: np.ndarray, face: List[int]) -> np.ndarray:
+def calculate_face_normal(vertices: np.ndarray, face: list[int]) -> np.ndarray:
     """Calculate the normal vector for a face.
 
     Args:
@@ -141,7 +141,7 @@ def calculate_face_normal(vertices: np.ndarray, face: List[int]) -> np.ndarray:
     return normal / norm_len
 
 
-def calculate_face_center(vertices: np.ndarray, face: List[int]) -> np.ndarray:
+def calculate_face_center(vertices: np.ndarray, face: list[int]) -> np.ndarray:
     """Calculate the center point of a face.
 
     Args:
@@ -157,7 +157,7 @@ def calculate_face_center(vertices: np.ndarray, face: List[int]) -> np.ndarray:
 
 def is_face_visible(
     vertices: np.ndarray,
-    face: List[int],
+    face: list[int],
     elev: float,
     azim: float,
     threshold: float = 0.1
@@ -179,7 +179,7 @@ def is_face_visible(
     return np.dot(normal, view_dir) > threshold
 
 
-def cell_to_vectors(cellpar: List[float]) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+def cell_to_vectors(cellpar: list[float]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Convert cell parameters to lattice vectors.
 
     Args:
@@ -208,7 +208,7 @@ def cell_to_vectors(cellpar: List[float]) -> Tuple[np.ndarray, np.ndarray, np.nd
     return va, vb, vc
 
 
-def calculate_bounding_box(vertices: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+def calculate_bounding_box(vertices: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Calculate axis-aligned bounding box for vertices.
 
     Args:
@@ -225,7 +225,7 @@ def calculate_view_bounds(
     axis_origin: np.ndarray = None,
     axis_length: float = None,
     padding: float = 1.03
-) -> Tuple[np.ndarray, float]:
+) -> tuple[np.ndarray, float]:
     """Calculate view bounds that encompass all content with optional axes.
 
     Args:

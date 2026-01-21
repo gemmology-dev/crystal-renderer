@@ -6,8 +6,8 @@ This subpackage provides exporters for various 3D file formats:
 - GEMCAD for gem cutting software
 """
 
-from .stl import export_stl, geometry_to_stl
 from .gltf import export_gltf, geometry_to_gltf
+from .stl import export_stl, geometry_to_stl
 
 __all__ = [
     'export_stl',

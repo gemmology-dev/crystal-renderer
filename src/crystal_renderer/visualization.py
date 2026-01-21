@@ -5,17 +5,19 @@ systems, CDL morphology, and combined views.
 """
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
-import numpy as np
+from typing import Any
 
 # Import matplotlib with Agg backend for headless rendering
 import matplotlib
+import numpy as np
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 # Internal imports
-from .data import AXIS_COLOURS, HABIT_COLOURS, FORM_COLORS
+from .data import FORM_COLORS, HABIT_COLOURS
+from .info_panel import render_info_panel
 from .projection import (
     calculate_axis_origin,
     calculate_vertex_visibility,
@@ -25,23 +27,22 @@ from .rendering import (
     draw_crystallographic_axes,
     hide_axes_and_grid,
 )
-from .info_panel import render_info_panel
 
 
 def generate_cdl_svg(
     cdl_string: str,
-    output_path: Union[str, Path],
+    output_path: str | Path,
     show_axes: bool = True,
     elev: float = 30,
     azim: float = -45,
     color_by_form: bool = False,
     show_grid: bool = True,
     face_labels: bool = False,
-    info_properties: Optional[Dict[str, Any]] = None,
+    info_properties: dict[str, Any] | None = None,
     info_position: str = 'top-right',
     info_style: str = 'compact',
     info_fontsize: int = 10,
-    figsize: Tuple[int, int] = (10, 10),
+    figsize: tuple[int, int] = (10, 10),
     dpi: int = 150
 ) -> Path:
     """Generate SVG from Crystal Description Language notation.
@@ -202,18 +203,18 @@ def generate_cdl_svg(
 
 def generate_geometry_svg(
     vertices: np.ndarray,
-    faces: List[List[int]],
-    output_path: Union[str, Path],
-    face_normals: Optional[List[np.ndarray]] = None,
+    faces: list[list[int]],
+    output_path: str | Path,
+    face_normals: list[np.ndarray] | None = None,
     show_axes: bool = True,
     elev: float = 30,
     azim: float = -45,
     show_grid: bool = True,
     face_color: str = '#81D4FA',
     edge_color: str = '#0277BD',
-    title: Optional[str] = None,
-    info_properties: Optional[Dict[str, Any]] = None,
-    figsize: Tuple[int, int] = (10, 10),
+    title: str | None = None,
+    info_properties: dict[str, Any] | None = None,
+    figsize: tuple[int, int] = (10, 10),
     dpi: int = 150
 ) -> Path:
     """Generate SVG from raw geometry data.
@@ -315,7 +316,7 @@ def generate_geometry_svg(
 
 def _add_face_labels(ax: Any, geometry: Any, elev: float, azim: float) -> None:
     """Add Miller index labels to visible faces."""
-    from .projection import calculate_view_direction, calculate_face_normal, calculate_face_center
+    from .projection import calculate_face_center, calculate_face_normal, calculate_view_direction
 
     view_dir = calculate_view_direction(elev, azim)
 
@@ -333,15 +334,15 @@ def _add_face_labels(ax: Any, geometry: Any, elev: float, azim: float) -> None:
                 center[0], center[1], center[2], label,
                 fontsize=8, ha='center', va='center',
                 color='#333333', fontweight='bold',
-                bbox=dict(
-                    boxstyle='round,pad=0.2',
-                    facecolor='white', alpha=0.7,
-                    edgecolor='none'
-                )
+                bbox={
+                    'boxstyle': 'round,pad=0.2',
+                    'facecolor': 'white', 'alpha': 0.7,
+                    'edgecolor': 'none'
+                }
             )
 
 
-def _add_form_legend(ax: Any, forms: List[Any]) -> None:
+def _add_form_legend(ax: Any, forms: list[Any]) -> None:
     """Add legend for color-by-form mode."""
     y_pos = 0.95
     for i, form in enumerate(forms):
@@ -352,10 +353,10 @@ def _add_form_legend(ax: Any, forms: List[Any]) -> None:
             0.02, y_pos, f'\u25CF {miller_str}{scale_str}',
             transform=ax.transAxes,
             fontsize=11, color=colours['edge'], fontweight='bold',
-            bbox=dict(
-                boxstyle='round,pad=0.2',
-                facecolor=colours['face'],
-                edgecolor='none', alpha=0.8
-            )
+            bbox={
+                'boxstyle': 'round,pad=0.2',
+                'facecolor': colours['face'],
+                'edgecolor': 'none', 'alpha': 0.8
+            }
         )
         y_pos -= 0.05

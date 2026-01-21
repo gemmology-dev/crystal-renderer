@@ -5,11 +5,11 @@ on crystal visualizations, showing properties like name, chemistry,
 hardness, refractive index, etc.
 """
 
-from typing import Any, Callable, Dict, Optional
-
+from collections.abc import Callable
+from typing import Any
 
 # Default property label mappings
-PROPERTY_LABELS: Dict[str, str] = {
+PROPERTY_LABELS: dict[str, str] = {
     'name': 'Name',
     'chemistry': 'Chemistry',
     'formula': 'Formula',
@@ -84,12 +84,12 @@ def format_property_value(key: str, value: Any) -> str:
 
 def render_info_panel(
     ax: Any,
-    properties: Dict[str, Any],
+    properties: dict[str, Any],
     position: str = 'top-right',
     style: str = 'compact',
     fontsize: int = 10,
-    get_label: Optional[Callable[[str], str]] = None,
-    format_value: Optional[Callable[[str, Any], str]] = None
+    get_label: Callable[[str], str] | None = None,
+    format_value: Callable[[str, Any], str] | None = None
 ) -> None:
     """Render gemstone information panel on the visualization.
 
@@ -162,13 +162,13 @@ def render_info_panel(
     text = '\n'.join(lines)
 
     # Create text box with semi-transparent background
-    bbox_props = dict(
-        boxstyle='round,pad=0.4',
-        facecolor='white',
-        edgecolor='#cccccc',
-        alpha=0.9,
-        linewidth=1
-    )
+    bbox_props = {
+        'boxstyle': 'round,pad=0.4',
+        'facecolor': 'white',
+        'edgecolor': '#cccccc',
+        'alpha': 0.9,
+        'linewidth': 1
+    }
 
     ax.text2D(
         x, y, text,
@@ -182,9 +182,9 @@ def render_info_panel(
 
 
 def create_fga_info_panel(
-    mineral_data: Dict[str, Any],
-    include_keys: Optional[list] = None
-) -> Dict[str, Any]:
+    mineral_data: dict[str, Any],
+    include_keys: list | None = None
+) -> dict[str, Any]:
     """Create a standardized FGA-style info panel from mineral data.
 
     Args:

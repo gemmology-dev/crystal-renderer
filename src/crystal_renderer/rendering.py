@@ -4,7 +4,8 @@ This module contains functions for drawing atoms, bonds, unit cells,
 coordination polyhedra, and other crystal visualization elements.
 """
 
-from typing import Dict, List, Optional, Set, Tuple, Any
+from typing import Any
+
 import numpy as np
 
 from .data import AXIS_COLOURS, ELEMENT_COLOURS
@@ -29,9 +30,7 @@ def get_element_colour(symbol: str) -> str:
         from ase.data.colors import jmol_colors
         z = atomic_numbers[symbol]
         rgb = jmol_colors[z]
-        return '#{:02x}{:02x}{:02x}'.format(
-            int(rgb[0] * 255), int(rgb[1] * 255), int(rgb[2] * 255)
-        )
+        return f'#{int(rgb[0] * 255):02x}{int(rgb[1] * 255):02x}{int(rgb[2] * 255):02x}'
     except (ImportError, KeyError, IndexError):
         return '#808080'  # Default grey
 
@@ -63,20 +62,20 @@ def blend_colors(color1: str, color2: str) -> str:
     Returns:
         Blended hex colour
     """
-    def hex_to_rgb(hex_color: str) -> Tuple[int, int, int]:
+    def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
         hex_color = hex_color.lstrip('#')
         return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
 
-    def rgb_to_hex(rgb: Tuple[int, int, int]) -> str:
+    def rgb_to_hex(rgb: tuple[int, int, int]) -> str:
         return '#{:02x}{:02x}{:02x}'.format(*rgb)
 
     rgb1 = hex_to_rgb(color1)
     rgb2 = hex_to_rgb(color2)
-    blended = tuple((c1 + c2) // 2 for c1, c2 in zip(rgb1, rgb2))
+    blended = tuple((c1 + c2) // 2 for c1, c2 in zip(rgb1, rgb2, strict=False))
     return rgb_to_hex(blended)
 
 
-def draw_unit_cell_box(ax: Any, cellpar: List[float], show_axes: bool = True) -> None:
+def draw_unit_cell_box(ax: Any, cellpar: list[float], show_axes: bool = True) -> None:
     """Draw the unit cell box with optional axes.
 
     Args:
@@ -109,7 +108,7 @@ def draw_unit_cell_box(ax: Any, cellpar: List[float], show_axes: bool = True) ->
 
     # Draw edges
     for i, j in edges:
-        ax.plot3D(*zip(corners[i], corners[j]), 'k-', linewidth=0.8, alpha=0.6)
+        ax.plot3D(*zip(corners[i], corners[j], strict=False), 'k-', linewidth=0.8, alpha=0.6)
 
     # Draw crystallographic axes
     if show_axes:
@@ -150,7 +149,7 @@ def draw_atoms(ax: Any, atoms: Any) -> None:
     positions = atoms.get_positions()
     symbols = atoms.get_chemical_symbols()
 
-    for pos, sym in zip(positions, symbols):
+    for pos, sym in zip(positions, symbols, strict=False):
         colour = get_element_colour(sym)
         radius = get_element_radius(sym)
 
@@ -219,19 +218,19 @@ def draw_atom_labels(ax: Any, atoms: Any, offset: float = 0.35) -> None:
     positions = atoms.get_positions()
     symbols = atoms.get_chemical_symbols()
 
-    for pos, sym in zip(positions, symbols):
+    for pos, sym in zip(positions, symbols, strict=False):
         ax.text(
             pos[0] + offset * 0.5,
             pos[1] + offset * 0.5,
             pos[2] + offset,
             sym, fontsize=9, ha='center', va='bottom',
             fontweight='bold', color='#333333',
-            bbox=dict(
-                boxstyle='round,pad=0.15',
-                facecolor='white',
-                edgecolor='none',
-                alpha=0.7
-            )
+            bbox={
+                'boxstyle': 'round,pad=0.15',
+                'facecolor': 'white',
+                'edgecolor': 'none',
+                'alpha': 0.7
+            }
         )
 
 
@@ -252,8 +251,8 @@ def draw_coordination_polyhedra(
         cutoff: Maximum distance for coordination
     """
     try:
-        from scipy.spatial import ConvexHull
         from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+        from scipy.spatial import ConvexHull
     except ImportError:
         return
 
@@ -292,7 +291,7 @@ def draw_coordination_polyhedra(
                 pass
 
 
-def draw_legend(ax: Any, elements_used: Set[str]) -> None:
+def draw_legend(ax: Any, elements_used: set[str]) -> None:
     """Draw legend with colored dots for each element.
 
     Args:
@@ -306,12 +305,12 @@ def draw_legend(ax: Any, elements_used: Set[str]) -> None:
             0.02, y_pos, f'\u25CF {symbol}',
             transform=ax.transAxes,
             fontsize=11, color=color, fontweight='bold',
-            bbox=dict(
-                boxstyle='round,pad=0.2',
-                facecolor='white',
-                edgecolor='none',
-                alpha=0.8
-            )
+            bbox={
+                'boxstyle': 'round,pad=0.2',
+                'facecolor': 'white',
+                'edgecolor': 'none',
+                'alpha': 0.8
+            }
         )
         y_pos -= 0.045
 
@@ -320,7 +319,7 @@ def draw_crystallographic_axes(
     ax: Any,
     axis_origin: np.ndarray,
     axis_length: float,
-    directions: Optional[List[Tuple[str, List[float]]]] = None
+    directions: list[tuple[str, list[float]]] | None = None
 ) -> None:
     """Draw crystallographic axes at the specified origin.
 

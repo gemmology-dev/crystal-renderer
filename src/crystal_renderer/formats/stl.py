@@ -6,11 +6,11 @@ for 3D printing and CAD applications.
 
 import struct
 from pathlib import Path
-from typing import List, Tuple, Union
+
 import numpy as np
 
 
-def triangulate_face(vertices: np.ndarray, face: List[int]) -> List[Tuple[int, int, int]]:
+def triangulate_face(vertices: np.ndarray, face: list[int]) -> list[tuple[int, int, int]]:
     """Triangulate a polygon face using fan triangulation.
 
     Args:
@@ -51,7 +51,7 @@ def calculate_triangle_normal(v0: np.ndarray, v1: np.ndarray, v2: np.ndarray) ->
 
 def geometry_to_stl(
     vertices: np.ndarray,
-    faces: List[List[int]],
+    faces: list[list[int]],
     binary: bool = True
 ) -> bytes:
     """Convert crystal geometry to STL format.
@@ -77,7 +77,7 @@ def geometry_to_stl(
 
 def _geometry_to_binary_stl(
     vertices: np.ndarray,
-    triangles: List[Tuple[int, int, int]]
+    triangles: list[tuple[int, int, int]]
 ) -> bytes:
     """Generate binary STL content.
 
@@ -117,7 +117,7 @@ def _geometry_to_binary_stl(
 
 def _geometry_to_ascii_stl(
     vertices: np.ndarray,
-    triangles: List[Tuple[int, int, int]]
+    triangles: list[tuple[int, int, int]]
 ) -> str:
     """Generate ASCII STL content.
 
@@ -148,8 +148,8 @@ def _geometry_to_ascii_stl(
 
 def export_stl(
     vertices: np.ndarray,
-    faces: List[List[int]],
-    output_path: Union[str, Path],
+    faces: list[list[int]],
+    output_path: str | Path,
     binary: bool = True
 ) -> Path:
     """Export crystal geometry to an STL file.

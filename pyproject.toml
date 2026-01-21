@@ -68,6 +68,11 @@ all = [
     "Pillow>=9.0.0",
     "ase>=3.22.0"
 ]
+docs = [
+    "mkdocs>=1.5",
+    "mkdocs-material>=9.0",
+    "mkdocstrings[python]>=0.24"
+]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]

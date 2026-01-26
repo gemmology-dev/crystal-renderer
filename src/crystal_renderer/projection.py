@@ -4,7 +4,6 @@ This module handles 3D to 2D projection calculations, view transformations,
 and visibility determination for crystal rendering.
 """
 
-
 import numpy as np
 
 
@@ -20,18 +19,13 @@ def calculate_view_direction(elev: float, azim: float) -> np.ndarray:
     """
     elev_rad = np.radians(elev)
     azim_rad = np.radians(azim)
-    return np.array([
-        np.cos(elev_rad) * np.cos(azim_rad),
-        np.cos(elev_rad) * np.sin(azim_rad),
-        np.sin(elev_rad)
-    ])
+    return np.array(
+        [np.cos(elev_rad) * np.cos(azim_rad), np.cos(elev_rad) * np.sin(azim_rad), np.sin(elev_rad)]
+    )
 
 
 def calculate_axis_origin(
-    vertices: np.ndarray,
-    elev: float = 30,
-    azim: float = -45,
-    offset_factor: float = 0.02
+    vertices: np.ndarray, elev: float = 30, azim: float = -45, offset_factor: float = 0.02
 ) -> tuple[np.ndarray, float]:
     """Calculate axis placement for maximum crystal fill efficiency.
 
@@ -54,11 +48,13 @@ def calculate_axis_origin(
     max_extent = np.max(extent)
 
     # Place origin at front-bottom-left corner with tiny clearance (2%)
-    axis_origin = np.array([
-        min_bounds[0] - max_extent * offset_factor,
-        min_bounds[1] - max_extent * offset_factor,
-        min_bounds[2] - max_extent * offset_factor * 0.5
-    ])
+    axis_origin = np.array(
+        [
+            min_bounds[0] - max_extent * offset_factor,
+            min_bounds[1] - max_extent * offset_factor,
+            min_bounds[2] - max_extent * offset_factor * 0.5,
+        ]
+    )
 
     # Adaptive axis length: 25% base, capped per crystal dimension
     base_length = max_extent * 0.25
@@ -71,11 +67,7 @@ def calculate_axis_origin(
 
 
 def calculate_vertex_visibility(
-    vertices: np.ndarray,
-    faces: list[list[int]],
-    elev: float,
-    azim: float,
-    threshold: float = 0.1
+    vertices: np.ndarray, faces: list[list[int]], elev: float, azim: float, threshold: float = 0.1
 ) -> np.ndarray:
     """Determine which vertices are on front-facing vs back-facing surfaces.
 
@@ -156,11 +148,7 @@ def calculate_face_center(vertices: np.ndarray, face: list[int]) -> np.ndarray:
 
 
 def is_face_visible(
-    vertices: np.ndarray,
-    face: list[int],
-    elev: float,
-    azim: float,
-    threshold: float = 0.1
+    vertices: np.ndarray, face: list[int], elev: float, azim: float, threshold: float = 0.1
 ) -> bool:
     """Check if a face is visible from the given view angle.
 
@@ -224,7 +212,7 @@ def calculate_view_bounds(
     vertices: np.ndarray,
     axis_origin: np.ndarray = None,
     axis_length: float = None,
-    padding: float = 1.03
+    padding: float = 1.03,
 ) -> tuple[np.ndarray, float]:
     """Calculate view bounds that encompass all content with optional axes.
 
@@ -238,11 +226,13 @@ def calculate_view_bounds(
         Tuple of (center, half_extent) for setting axis limits
     """
     if axis_origin is not None and axis_length is not None:
-        axis_tips = np.array([
-            axis_origin + np.array([axis_length * 1.08, 0, 0]),
-            axis_origin + np.array([0, axis_length * 1.08, 0]),
-            axis_origin + np.array([0, 0, axis_length * 1.08])
-        ])
+        axis_tips = np.array(
+            [
+                axis_origin + np.array([axis_length * 1.08, 0, 0]),
+                axis_origin + np.array([0, axis_length * 1.08, 0]),
+                axis_origin + np.array([0, 0, axis_length * 1.08]),
+            ]
+        )
         all_points = np.vstack([vertices, axis_origin.reshape(1, 3), axis_tips])
     else:
         all_points = vertices

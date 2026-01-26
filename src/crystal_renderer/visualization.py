@@ -11,7 +11,7 @@ from typing import Any
 import matplotlib
 import numpy as np
 
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
@@ -39,11 +39,11 @@ def generate_cdl_svg(
     show_grid: bool = True,
     face_labels: bool = False,
     info_properties: dict[str, Any] | None = None,
-    info_position: str = 'top-right',
-    info_style: str = 'compact',
+    info_position: str = "top-right",
+    info_style: str = "compact",
     info_fontsize: int = 10,
     figsize: tuple[int, int] = (10, 10),
-    dpi: int = 150
+    dpi: int = 150,
 ) -> Path:
     """Generate SVG from Crystal Description Language notation.
 
@@ -84,12 +84,12 @@ def generate_cdl_svg(
 
     # Get colours based on crystal system
     crystal_system = description.system
-    default_colours = HABIT_COLOURS.get(crystal_system, HABIT_COLOURS['cubic'])
+    default_colours = HABIT_COLOURS.get(crystal_system, HABIT_COLOURS["cubic"])
 
     # Create figure
     fig = plt.figure(figsize=figsize)
-    ax = fig.add_subplot(111, projection='3d')
-    ax.set_proj_type('ortho')
+    ax = fig.add_subplot(111, projection="3d")
+    ax.set_proj_type("ortho")
     ax.view_init(elev=elev, azim=azim)
 
     # Draw faces
@@ -102,9 +102,9 @@ def generate_cdl_svg(
             poly = Poly3DCollection(
                 [verts],
                 alpha=0.7,
-                facecolor=colours['face'],
-                edgecolor=colours['edge'],
-                linewidth=1.5
+                facecolor=colours["face"],
+                edgecolor=colours["edge"],
+                linewidth=1.5,
             )
             ax.add_collection3d(poly)
     else:
@@ -113,23 +113,24 @@ def generate_cdl_svg(
         poly = Poly3DCollection(
             face_vertices,
             alpha=0.7,
-            facecolor=default_colours['face'],
-            edgecolor=default_colours['edge'],
-            linewidth=1.5
+            facecolor=default_colours["face"],
+            edgecolor=default_colours["edge"],
+            linewidth=1.5,
         )
         ax.add_collection3d(poly)
 
     # Add vertices with depth-based visibility
-    front_mask = calculate_vertex_visibility(
-        geometry.vertices, geometry.faces, elev, azim
-    )
+    front_mask = calculate_vertex_visibility(geometry.vertices, geometry.faces, elev, azim)
 
     if np.any(front_mask):
         ax.scatter3D(
             geometry.vertices[front_mask, 0],
             geometry.vertices[front_mask, 1],
             geometry.vertices[front_mask, 2],
-            color=default_colours['edge'], s=30, alpha=0.9, zorder=10
+            color=default_colours["edge"],
+            s=30,
+            alpha=0.9,
+            zorder=10,
         )
 
     back_mask = ~front_mask
@@ -138,11 +139,14 @@ def generate_cdl_svg(
             geometry.vertices[back_mask, 0],
             geometry.vertices[back_mask, 1],
             geometry.vertices[back_mask, 2],
-            color=default_colours['edge'], s=30, alpha=0.3, zorder=5
+            color=default_colours["edge"],
+            s=30,
+            alpha=0.3,
+            zorder=5,
         )
 
     # Add face labels if requested
-    if face_labels and hasattr(geometry, 'face_millers') and geometry.face_millers:
+    if face_labels and hasattr(geometry, "face_millers") and geometry.face_millers:
         _add_face_labels(ax, geometry, elev, azim)
 
     # Draw axes
@@ -151,9 +155,7 @@ def generate_cdl_svg(
         draw_crystallographic_axes(ax, axis_origin, axis_length)
 
         # Calculate view bounds including axes
-        center, half_extent = calculate_view_bounds(
-            geometry.vertices, axis_origin, axis_length
-        )
+        center, half_extent = calculate_view_bounds(geometry.vertices, axis_origin, axis_length)
     else:
         center = np.array([0.0, 0.0, 0.0])
         half_extent = np.max(np.abs(geometry.vertices)) * 1.1
@@ -170,16 +172,16 @@ def generate_cdl_svg(
     # Create title from CDL
     forms_str = " + ".join(str(f.miller) for f in description.forms)
     title = f"{description.system.title()} [{description.point_group}] : {forms_str}"
-    ax.set_title(title, fontsize=14, fontweight='bold')
+    ax.set_title(title, fontsize=14, fontweight="bold")
 
     # Add legend for color-by-form mode
     if color_by_form and len(description.forms) > 1:
         _add_form_legend(ax, description.forms)
 
     # Clean up axes
-    ax.set_xlabel('')
-    ax.set_ylabel('')
-    ax.set_zlabel('')
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_zlabel("")
     ax.set_xticklabels([])
     ax.set_yticklabels([])
     ax.set_zticklabels([])
@@ -187,15 +189,12 @@ def generate_cdl_svg(
     # Render info panel
     if info_properties:
         render_info_panel(
-            ax, info_properties,
-            position=info_position,
-            style=info_style,
-            fontsize=info_fontsize
+            ax, info_properties, position=info_position, style=info_style, fontsize=info_fontsize
         )
 
     # Save
     plt.tight_layout()
-    plt.savefig(output_path, format='svg', dpi=dpi, bbox_inches='tight')
+    plt.savefig(output_path, format="svg", dpi=dpi, bbox_inches="tight")
     plt.close(fig)
 
     return output_path
@@ -210,12 +209,12 @@ def generate_geometry_svg(
     elev: float = 30,
     azim: float = -45,
     show_grid: bool = True,
-    face_color: str = '#81D4FA',
-    edge_color: str = '#0277BD',
+    face_color: str = "#81D4FA",
+    edge_color: str = "#0277BD",
     title: str | None = None,
     info_properties: dict[str, Any] | None = None,
     figsize: tuple[int, int] = (10, 10),
-    dpi: int = 150
+    dpi: int = 150,
 ) -> Path:
     """Generate SVG from raw geometry data.
 
@@ -243,18 +242,14 @@ def generate_geometry_svg(
 
     # Create figure
     fig = plt.figure(figsize=figsize)
-    ax = fig.add_subplot(111, projection='3d')
-    ax.set_proj_type('ortho')
+    ax = fig.add_subplot(111, projection="3d")
+    ax.set_proj_type("ortho")
     ax.view_init(elev=elev, azim=azim)
 
     # Draw faces
     face_vertices = [[vertices[i] for i in face] for face in faces]
     poly = Poly3DCollection(
-        face_vertices,
-        alpha=0.7,
-        facecolor=face_color,
-        edgecolor=edge_color,
-        linewidth=1.5
+        face_vertices, alpha=0.7, facecolor=face_color, edgecolor=edge_color, linewidth=1.5
     )
     ax.add_collection3d(poly)
 
@@ -266,7 +261,10 @@ def generate_geometry_svg(
             vertices[front_mask, 0],
             vertices[front_mask, 1],
             vertices[front_mask, 2],
-            color=edge_color, s=30, alpha=0.9, zorder=10
+            color=edge_color,
+            s=30,
+            alpha=0.9,
+            zorder=10,
         )
 
     back_mask = ~front_mask
@@ -275,7 +273,10 @@ def generate_geometry_svg(
             vertices[back_mask, 0],
             vertices[back_mask, 1],
             vertices[back_mask, 2],
-            color=edge_color, s=30, alpha=0.3, zorder=5
+            color=edge_color,
+            s=30,
+            alpha=0.3,
+            zorder=5,
         )
 
     # Draw axes
@@ -295,11 +296,11 @@ def generate_geometry_svg(
         hide_axes_and_grid(ax)
 
     if title:
-        ax.set_title(title, fontsize=14, fontweight='bold')
+        ax.set_title(title, fontsize=14, fontweight="bold")
 
-    ax.set_xlabel('')
-    ax.set_ylabel('')
-    ax.set_zlabel('')
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_zlabel("")
     ax.set_xticklabels([])
     ax.set_yticklabels([])
     ax.set_zticklabels([])
@@ -308,7 +309,7 @@ def generate_geometry_svg(
         render_info_panel(ax, info_properties)
 
     plt.tight_layout()
-    plt.savefig(output_path, format='svg', dpi=dpi, bbox_inches='tight')
+    plt.savefig(output_path, format="svg", dpi=dpi, bbox_inches="tight")
     plt.close(fig)
 
     return output_path
@@ -331,14 +332,21 @@ def _add_face_labels(ax: Any, geometry: Any, elev: float, azim: float) -> None:
             miller = geometry.face_millers[i]
             label = f"({miller[0]}{miller[1]}{miller[2]})"
             ax.text(
-                center[0], center[1], center[2], label,
-                fontsize=8, ha='center', va='center',
-                color='#333333', fontweight='bold',
+                center[0],
+                center[1],
+                center[2],
+                label,
+                fontsize=8,
+                ha="center",
+                va="center",
+                color="#333333",
+                fontweight="bold",
                 bbox={
-                    'boxstyle': 'round,pad=0.2',
-                    'facecolor': 'white', 'alpha': 0.7,
-                    'edgecolor': 'none'
-                }
+                    "boxstyle": "round,pad=0.2",
+                    "facecolor": "white",
+                    "alpha": 0.7,
+                    "edgecolor": "none",
+                },
             )
 
 
@@ -350,13 +358,18 @@ def _add_form_legend(ax: Any, forms: list[Any]) -> None:
         miller_str = str(form.miller)
         scale_str = f"@{form.scale}" if form.scale != 1.0 else ""
         ax.text2D(
-            0.02, y_pos, f'\u25CF {miller_str}{scale_str}',
+            0.02,
+            y_pos,
+            f"\u25cf {miller_str}{scale_str}",
             transform=ax.transAxes,
-            fontsize=11, color=colours['edge'], fontweight='bold',
+            fontsize=11,
+            color=colours["edge"],
+            fontweight="bold",
             bbox={
-                'boxstyle': 'round,pad=0.2',
-                'facecolor': colours['face'],
-                'edgecolor': 'none', 'alpha': 0.8
-            }
+                "boxstyle": "round,pad=0.2",
+                "facecolor": colours["face"],
+                "edgecolor": "none",
+                "alpha": 0.8,
+            },
         )
         y_pos -= 0.05

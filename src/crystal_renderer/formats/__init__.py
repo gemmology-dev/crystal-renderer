@@ -10,8 +10,8 @@ from .gltf import export_gltf, geometry_to_gltf
 from .stl import export_stl, geometry_to_stl
 
 __all__ = [
-    'export_stl',
-    'geometry_to_stl',
-    'export_gltf',
-    'geometry_to_gltf',
+    "export_stl",
+    "geometry_to_stl",
+    "export_gltf",
+    "geometry_to_gltf",
 ]

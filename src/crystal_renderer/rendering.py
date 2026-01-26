@@ -28,11 +28,12 @@ def get_element_colour(symbol: str) -> str:
     try:
         from ase.data import atomic_numbers
         from ase.data.colors import jmol_colors
+
         z = atomic_numbers[symbol]
         rgb = jmol_colors[z]
-        return f'#{int(rgb[0] * 255):02x}{int(rgb[1] * 255):02x}{int(rgb[2] * 255):02x}'
+        return f"#{int(rgb[0] * 255):02x}{int(rgb[1] * 255):02x}{int(rgb[2] * 255):02x}"
     except (ImportError, KeyError, IndexError):
-        return '#808080'  # Default grey
+        return "#808080"  # Default grey
 
 
 def get_element_radius(symbol: str) -> float:
@@ -46,6 +47,7 @@ def get_element_radius(symbol: str) -> float:
     """
     try:
         from ase.data import atomic_numbers, covalent_radii
+
         z = atomic_numbers[symbol]
         return covalent_radii[z] * 0.5  # Scale down for display
     except (ImportError, KeyError, IndexError):
@@ -62,12 +64,13 @@ def blend_colors(color1: str, color2: str) -> str:
     Returns:
         Blended hex colour
     """
+
     def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
-        hex_color = hex_color.lstrip('#')
-        return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        hex_color = hex_color.lstrip("#")
+        return tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
 
     def rgb_to_hex(rgb: tuple[int, int, int]) -> str:
-        return '#{:02x}{:02x}{:02x}'.format(*rgb)
+        return "#{:02x}{:02x}{:02x}".format(*rgb)
 
     rgb1 = hex_to_rgb(color1)
     rgb2 = hex_to_rgb(color2)
@@ -86,29 +89,27 @@ def draw_unit_cell_box(ax: Any, cellpar: list[float], show_axes: bool = True) ->
     va, vb, vc = cell_to_vectors(cellpar)
 
     # Define the 8 corners of the unit cell
-    corners = np.array([
-        [0, 0, 0],
-        va,
-        vb,
-        vc,
-        va + vb,
-        va + vc,
-        vb + vc,
-        va + vb + vc
-    ])
+    corners = np.array([[0, 0, 0], va, vb, vc, va + vb, va + vc, vb + vc, va + vb + vc])
 
     # Define the 12 edges
     edges = [
-        [0, 1], [0, 2], [0, 3],  # From origin
-        [1, 4], [1, 5],          # From a
-        [2, 4], [2, 6],          # From b
-        [3, 5], [3, 6],          # From c
-        [4, 7], [5, 7], [6, 7]   # To opposite corner
+        [0, 1],
+        [0, 2],
+        [0, 3],  # From origin
+        [1, 4],
+        [1, 5],  # From a
+        [2, 4],
+        [2, 6],  # From b
+        [3, 5],
+        [3, 6],  # From c
+        [4, 7],
+        [5, 7],
+        [6, 7],  # To opposite corner
     ]
 
     # Draw edges
     for i, j in edges:
-        ax.plot3D(*zip(corners[i], corners[j], strict=False), 'k-', linewidth=0.8, alpha=0.6)
+        ax.plot3D(*zip(corners[i], corners[j], strict=False), "k-", linewidth=0.8, alpha=0.6)
 
     # Draw crystallographic axes
     if show_axes:
@@ -119,23 +120,27 @@ def draw_unit_cell_box(ax: Any, cellpar: list[float], show_axes: bool = True) ->
         vb_dir = vb / np.linalg.norm(vb)
         vc_dir = vc / np.linalg.norm(vc)
 
-        for axis_name, direction in [('a', va_dir), ('b', vb_dir), ('c', vc_dir)]:
+        for axis_name, direction in [("a", va_dir), ("b", vb_dir), ("c", vc_dir)]:
             ax.quiver(
-                axis_origin[0], axis_origin[1], axis_origin[2],
+                axis_origin[0],
+                axis_origin[1],
+                axis_origin[2],
                 direction[0] * axis_length,
                 direction[1] * axis_length,
                 direction[2] * axis_length,
                 color=AXIS_COLOURS[axis_name],
                 arrow_length_ratio=0.1,
-                linewidth=2
+                linewidth=2,
             )
             text_pos = axis_origin + direction * axis_length * 1.08
             ax.text(
-                text_pos[0], text_pos[1], text_pos[2],
+                text_pos[0],
+                text_pos[1],
+                text_pos[2],
                 axis_name,
                 fontsize=12,
-                fontweight='bold',
-                color=AXIS_COLOURS[axis_name]
+                fontweight="bold",
+                color=AXIS_COLOURS[axis_name],
             )
 
 
@@ -194,16 +199,20 @@ def draw_bonds(ax: Any, atoms: Any, cutoff: float = 3.0) -> None:
             [positions[i][0], midpoint[0]],
             [positions[i][1], midpoint[1]],
             [positions[i][2], midpoint[2]],
-            color=color_i, linewidth=3.0, alpha=0.85,
-            solid_capstyle='round'
+            color=color_i,
+            linewidth=3.0,
+            alpha=0.85,
+            solid_capstyle="round",
         )
         # Second half (midpoint to atom j)
         ax.plot3D(
             [midpoint[0], positions[j][0]],
             [midpoint[1], positions[j][1]],
             [midpoint[2], positions[j][2]],
-            color=color_j, linewidth=3.0, alpha=0.85,
-            solid_capstyle='round'
+            color=color_j,
+            linewidth=3.0,
+            alpha=0.85,
+            solid_capstyle="round",
         )
 
 
@@ -223,23 +232,23 @@ def draw_atom_labels(ax: Any, atoms: Any, offset: float = 0.35) -> None:
             pos[0] + offset * 0.5,
             pos[1] + offset * 0.5,
             pos[2] + offset,
-            sym, fontsize=9, ha='center', va='bottom',
-            fontweight='bold', color='#333333',
+            sym,
+            fontsize=9,
+            ha="center",
+            va="bottom",
+            fontweight="bold",
+            color="#333333",
             bbox={
-                'boxstyle': 'round,pad=0.15',
-                'facecolor': 'white',
-                'edgecolor': 'none',
-                'alpha': 0.7
-            }
+                "boxstyle": "round,pad=0.15",
+                "facecolor": "white",
+                "edgecolor": "none",
+                "alpha": 0.7,
+            },
         )
 
 
 def draw_coordination_polyhedra(
-    ax: Any,
-    atoms: Any,
-    center_element: str,
-    coord_element: str,
-    cutoff: float = 2.5
+    ax: Any, atoms: Any, center_element: str, coord_element: str, cutoff: float = 2.5
 ) -> None:
     """Draw coordination polyhedra around specified center atoms.
 
@@ -280,11 +289,7 @@ def draw_coordination_polyhedra(
                 hull = ConvexHull(coord_array)
                 faces = [coord_array[simplex] for simplex in hull.simplices]
                 poly = Poly3DCollection(
-                    faces,
-                    alpha=0.25,
-                    facecolor='#4FC3F7',
-                    edgecolor='#0288D1',
-                    linewidth=1.0
+                    faces, alpha=0.25, facecolor="#4FC3F7", edgecolor="#0288D1", linewidth=1.0
                 )
                 ax.add_collection3d(poly)
             except Exception:
@@ -300,17 +305,21 @@ def draw_legend(ax: Any, elements_used: set[str]) -> None:
     """
     y_pos = 0.95
     for symbol in sorted(elements_used):
-        color = ELEMENT_COLOURS.get(symbol, '#808080')
+        color = ELEMENT_COLOURS.get(symbol, "#808080")
         ax.text2D(
-            0.02, y_pos, f'\u25CF {symbol}',
+            0.02,
+            y_pos,
+            f"\u25cf {symbol}",
             transform=ax.transAxes,
-            fontsize=11, color=color, fontweight='bold',
+            fontsize=11,
+            color=color,
+            fontweight="bold",
             bbox={
-                'boxstyle': 'round,pad=0.2',
-                'facecolor': 'white',
-                'edgecolor': 'none',
-                'alpha': 0.8
-            }
+                "boxstyle": "round,pad=0.2",
+                "facecolor": "white",
+                "edgecolor": "none",
+                "alpha": 0.8,
+            },
         )
         y_pos -= 0.045
 
@@ -319,7 +328,7 @@ def draw_crystallographic_axes(
     ax: Any,
     axis_origin: np.ndarray,
     axis_length: float,
-    directions: list[tuple[str, list[float]]] | None = None
+    directions: list[tuple[str, list[float]]] | None = None,
 ) -> None:
     """Draw crystallographic axes at the specified origin.
 
@@ -330,26 +339,30 @@ def draw_crystallographic_axes(
         directions: Optional list of (name, direction) tuples
     """
     if directions is None:
-        directions = [('a', [1, 0, 0]), ('b', [0, 1, 0]), ('c', [0, 0, 1])]
+        directions = [("a", [1, 0, 0]), ("b", [0, 1, 0]), ("c", [0, 0, 1])]
 
     for axis_name, direction in directions:
         direction = np.array(direction)
         ax.quiver(
-            axis_origin[0], axis_origin[1], axis_origin[2],
+            axis_origin[0],
+            axis_origin[1],
+            axis_origin[2],
             direction[0] * axis_length,
             direction[1] * axis_length,
             direction[2] * axis_length,
             color=AXIS_COLOURS[axis_name],
             arrow_length_ratio=0.1,
-            linewidth=2
+            linewidth=2,
         )
         text_pos = axis_origin + direction * axis_length * 1.08
         ax.text(
-            text_pos[0], text_pos[1], text_pos[2],
+            text_pos[0],
+            text_pos[1],
+            text_pos[2],
             axis_name,
             fontsize=14,
-            fontweight='bold',
-            color=AXIS_COLOURS[axis_name]
+            fontweight="bold",
+            color=AXIS_COLOURS[axis_name],
         )
 
 
@@ -387,11 +400,11 @@ def hide_axes_and_grid(ax: Any) -> None:
     ax.xaxis.pane.fill = False
     ax.yaxis.pane.fill = False
     ax.zaxis.pane.fill = False
-    ax.xaxis.pane.set_edgecolor('none')
-    ax.yaxis.pane.set_edgecolor('none')
-    ax.zaxis.pane.set_edgecolor('none')
-    ax.xaxis.line.set_color('none')
-    ax.yaxis.line.set_color('none')
-    ax.zaxis.line.set_color('none')
+    ax.xaxis.pane.set_edgecolor("none")
+    ax.yaxis.pane.set_edgecolor("none")
+    ax.zaxis.pane.set_edgecolor("none")
+    ax.xaxis.line.set_color("none")
+    ax.yaxis.line.set_color("none")
+    ax.zaxis.line.set_color("none")
     ax.set_axis_off()
     ax.grid(False)

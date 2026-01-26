@@ -10,31 +10,31 @@ from typing import Any
 
 # Default property label mappings
 PROPERTY_LABELS: dict[str, str] = {
-    'name': 'Name',
-    'chemistry': 'Chemistry',
-    'formula': 'Formula',
-    'hardness': 'Hardness',
-    'sg': 'S.G.',
-    'ri': 'R.I.',
-    'dr': 'D.R.',
-    'dispersion': 'Dispersion',
-    'optic_sign': 'Optic Sign',
-    'crystal_system': 'System',
-    'system': 'System',
-    'pleochroism': 'Pleochroism',
-    'fluorescence': 'Fluorescence',
-    'lustre': 'Lustre',
-    'cleavage': 'Cleavage',
-    'fracture': 'Fracture',
-    'color': 'Colour',
-    'transparency': 'Transparency',
-    'habit': 'Habit',
-    'twinning': 'Twinning',
-    'treatments': 'Treatments',
-    'origin': 'Origin',
-    'species': 'Species',
-    'variety': 'Variety',
-    'phenomena': 'Phenomena',
+    "name": "Name",
+    "chemistry": "Chemistry",
+    "formula": "Formula",
+    "hardness": "Hardness",
+    "sg": "S.G.",
+    "ri": "R.I.",
+    "dr": "D.R.",
+    "dispersion": "Dispersion",
+    "optic_sign": "Optic Sign",
+    "crystal_system": "System",
+    "system": "System",
+    "pleochroism": "Pleochroism",
+    "fluorescence": "Fluorescence",
+    "lustre": "Lustre",
+    "cleavage": "Cleavage",
+    "fracture": "Fracture",
+    "color": "Colour",
+    "transparency": "Transparency",
+    "habit": "Habit",
+    "twinning": "Twinning",
+    "treatments": "Treatments",
+    "origin": "Origin",
+    "species": "Species",
+    "variety": "Variety",
+    "phenomena": "Phenomena",
 }
 
 
@@ -49,7 +49,7 @@ def get_property_label(key: str) -> str:
     """
     if key in PROPERTY_LABELS:
         return PROPERTY_LABELS[key]
-    return key.replace('_', ' ').title()
+    return key.replace("_", " ").title()
 
 
 def format_property_value(key: str, value: Any) -> str:
@@ -63,21 +63,21 @@ def format_property_value(key: str, value: Any) -> str:
         Formatted string value
     """
     if value is None:
-        return '-'
+        return "-"
 
     if isinstance(value, list):
         if len(value) > 3:
-            return ', '.join(str(v) for v in value[:3]) + '...'
-        return ', '.join(str(v) for v in value)
+            return ", ".join(str(v) for v in value[:3]) + "..."
+        return ", ".join(str(v) for v in value)
 
     if isinstance(value, float):
         # Format floats to reasonable precision
         if abs(value) < 0.01:
-            return f'{value:.4f}'
+            return f"{value:.4f}"
         elif abs(value) < 1:
-            return f'{value:.3f}'
+            return f"{value:.3f}"
         else:
-            return f'{value:.2f}'
+            return f"{value:.2f}"
 
     return str(value)
 
@@ -85,11 +85,11 @@ def format_property_value(key: str, value: Any) -> str:
 def render_info_panel(
     ax: Any,
     properties: dict[str, Any],
-    position: str = 'top-right',
-    style: str = 'compact',
+    position: str = "top-right",
+    style: str = "compact",
     fontsize: int = 10,
     get_label: Callable[[str], str] | None = None,
-    format_value: Callable[[str, Any], str] | None = None
+    format_value: Callable[[str, Any], str] | None = None,
 ) -> None:
     """Render gemstone information panel on the visualization.
 
@@ -113,77 +113,79 @@ def render_info_panel(
 
     # Determine position coordinates (in axes fraction 0-1)
     positions = {
-        'top-left': (0.02, 0.98, 'left', 'top'),
-        'top-right': (0.98, 0.98, 'right', 'top'),
-        'bottom-left': (0.02, 0.02, 'left', 'bottom'),
-        'bottom-right': (0.98, 0.02, 'right', 'bottom'),
+        "top-left": (0.02, 0.98, "left", "top"),
+        "top-right": (0.98, 0.98, "right", "top"),
+        "bottom-left": (0.02, 0.02, "left", "bottom"),
+        "bottom-right": (0.98, 0.02, "right", "bottom"),
     }
-    x, y, ha, va = positions.get(position, positions['top-right'])
+    x, y, ha, va = positions.get(position, positions["top-right"])
 
     # Build text lines based on style
     lines = []
 
-    if style == 'minimal':
+    if style == "minimal":
         # Just values, no labels
         for key, value in properties.items():
             lines.append(format_value(key, value))
 
-    elif style == 'detailed':
+    elif style == "detailed":
         # Full labels with grouping
-        name = properties.get('name', '')
+        name = properties.get("name", "")
         if name:
             lines.append(name.upper())
-            lines.append('-' * max(len(name), 15))
+            lines.append("-" * max(len(name), 15))
 
         for key, value in properties.items():
-            if key == 'name':
+            if key == "name":
                 continue
             label = get_label(key)
             formatted = format_value(key, value)
-            lines.append(f'{label}: {formatted}')
+            lines.append(f"{label}: {formatted}")
 
     else:  # compact (default)
         # Name on first line, then key: value pairs
-        name = properties.get('name', '')
+        name = properties.get("name", "")
         if name:
             lines.append(name)
 
         for key, value in properties.items():
-            if key == 'name':
+            if key == "name":
                 continue
             label = get_label(key)
             formatted = format_value(key, value)
-            lines.append(f'{label}: {formatted}')
+            lines.append(f"{label}: {formatted}")
 
     if not lines:
         return
 
     # Join lines and render
-    text = '\n'.join(lines)
+    text = "\n".join(lines)
 
     # Create text box with semi-transparent background
     bbox_props = {
-        'boxstyle': 'round,pad=0.4',
-        'facecolor': 'white',
-        'edgecolor': '#cccccc',
-        'alpha': 0.9,
-        'linewidth': 1
+        "boxstyle": "round,pad=0.4",
+        "facecolor": "white",
+        "edgecolor": "#cccccc",
+        "alpha": 0.9,
+        "linewidth": 1,
     }
 
     ax.text2D(
-        x, y, text,
+        x,
+        y,
+        text,
         transform=ax.transAxes,
         fontsize=fontsize,
-        fontfamily='monospace',
-        ha=ha, va=va,
+        fontfamily="monospace",
+        ha=ha,
+        va=va,
         bbox=bbox_props,
-        linespacing=1.3
+        linespacing=1.3,
     )
 
 
 def create_fga_info_panel(
-    mineral_data: dict[str, Any],
-    include_keys: list | None = None
+    mineral_data: dict[str, Any], include_keys: list | None = None
 ) -> dict[str, Any]:
     """Create a standardized FGA-style info panel from mineral data.
 
@@ -196,8 +198,15 @@ def create_fga_info_panel(
     """
     if include_keys is None:
         include_keys = [
-            'name', 'chemistry', 'hardness', 'sg', 'ri', 'dr',
-            'crystal_system', 'optic_sign', 'pleochroism'
+            "name",
+            "chemistry",
+            "hardness",
+            "sg",
+            "ri",
+            "dr",
+            "crystal_system",
+            "optic_sign",
+            "pleochroism",
         ]
 
     result = {}

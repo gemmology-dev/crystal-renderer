@@ -13,12 +13,14 @@ from pathlib import Path
 # Check for optional dependencies
 try:
     import cairosvg
+
     CAIROSVG_AVAILABLE = True
 except ImportError:
     CAIROSVG_AVAILABLE = False
 
 try:
     from PIL import Image
+
     PIL_AVAILABLE = True
 except ImportError:
     PIL_AVAILABLE = False
@@ -27,9 +29,9 @@ except ImportError:
 def convert_svg_to_raster(
     svg_path: str | Path,
     output_path: str | Path,
-    output_format: str = 'png',
+    output_format: str = "png",
     scale: float = 2.0,
-    quality: int = 95
+    quality: int = 95,
 ) -> Path:
     """Convert SVG to raster format (PNG, JPG, BMP).
 
@@ -48,10 +50,10 @@ def convert_svg_to_raster(
         ValueError: If format not supported
     """
     output_format = output_format.lower()
-    if output_format == 'jpeg':
-        output_format = 'jpg'
+    if output_format == "jpeg":
+        output_format = "jpg"
 
-    if output_format not in ('png', 'jpg', 'bmp'):
+    if output_format not in ("png", "jpg", "bmp"):
         raise ValueError(f"Unsupported format: {output_format}. Use png, jpg, or bmp.")
 
     if not CAIROSVG_AVAILABLE:
@@ -63,9 +65,9 @@ def convert_svg_to_raster(
     # Convert SVG to PNG using cairosvg
     png_data = cairosvg.svg2png(url=str(svg_path), scale=scale)
 
-    if output_format == 'png':
+    if output_format == "png":
         # Direct PNG output
-        with open(output_path, 'wb') as f:
+        with open(output_path, "wb") as f:
             f.write(png_data)
     else:
         # Convert PNG to JPG or BMP using PIL
@@ -75,15 +77,15 @@ def convert_svg_to_raster(
         img = Image.open(io.BytesIO(png_data))
 
         # Convert RGBA to RGB for formats that don't support alpha
-        if img.mode == 'RGBA':
-            background = Image.new('RGB', img.size, (255, 255, 255))
+        if img.mode == "RGBA":
+            background = Image.new("RGB", img.size, (255, 255, 255))
             background.paste(img, mask=img.split()[3])
             img = background
 
-        if output_format == 'jpg':
-            img.save(output_path, 'JPEG', quality=quality)
-        elif output_format == 'bmp':
-            img.save(output_path, 'BMP')
+        if output_format == "jpg":
+            img.save(output_path, "JPEG", quality=quality)
+        elif output_format == "bmp":
+            img.save(output_path, "BMP")
 
     return output_path
 
@@ -91,10 +93,10 @@ def convert_svg_to_raster(
 def generate_with_format(
     generator_func: Callable,
     output_path: str | Path,
-    output_format: str = 'svg',
+    output_format: str = "svg",
     scale: float = 2.0,
     quality: int = 95,
-    **kwargs
+    **kwargs,
 ) -> Path:
     """Generate crystal visualization in specified format.
 
@@ -113,27 +115,27 @@ def generate_with_format(
         ValueError: If format not supported
     """
     output_format = output_format.lower()
-    if output_format == 'jpeg':
-        output_format = 'jpg'
+    if output_format == "jpeg":
+        output_format = "jpg"
 
     output_path = Path(output_path)
 
     # For SVG, just call the generator directly
-    if output_format == 'svg':
+    if output_format == "svg":
         result = generator_func(output_path=str(output_path), **kwargs)
         return Path(result) if isinstance(result, str) else output_path
 
     # For raster formats, generate SVG to temp file then convert
-    if output_format in ('png', 'jpg', 'bmp'):
-        with tempfile.NamedTemporaryFile(suffix='.svg', delete=False) as tmp:
+    if output_format in ("png", "jpg", "bmp"):
+        with tempfile.NamedTemporaryFile(suffix=".svg", delete=False) as tmp:
             tmp_svg = tmp.name
 
         try:
             generator_func(output_path=tmp_svg, **kwargs)
 
             # Adjust output path extension
-            if output_path.suffix.lower() == '.svg':
-                output_path = output_path.with_suffix('.' + output_format)
+            if output_path.suffix.lower() == ".svg":
+                output_path = output_path.with_suffix("." + output_format)
 
             convert_svg_to_raster(tmp_svg, output_path, output_format, scale, quality)
             return output_path
@@ -151,6 +153,6 @@ def check_dependencies() -> dict:
         Dictionary with dependency status
     """
     return {
-        'cairosvg': CAIROSVG_AVAILABLE,
-        'pillow': PIL_AVAILABLE,
+        "cairosvg": CAIROSVG_AVAILABLE,
+        "pillow": PIL_AVAILABLE,
     }

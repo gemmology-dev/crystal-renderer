@@ -1,6 +1,6 @@
 [project]
 name = "gemmology-crystal-renderer"
-version = "1.0.0"
+version = "1.0.1"
 description = "SVG and 3D visualization for crystal geometries"
 readme = "README.md"
 license = { text = "MIT" }

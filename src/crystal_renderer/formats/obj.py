@@ -5,8 +5,6 @@ Provides functions to export crystal geometry to the widely-supported
 OBJ format for 3D visualization and modeling software.
 """
 
-from typing import Any
-
 import numpy as np
 
 
@@ -33,7 +31,7 @@ def geometry_to_obj(
         include_mtl is False.
     """
     lines = [
-        f"# Wavefront OBJ export",
+        "# Wavefront OBJ export",
         f"# Crystal geometry: {name}",
         f"# Vertices: {len(vertices)}, Faces: {len(faces)}",
         "",
@@ -60,7 +58,7 @@ def geometry_to_obj(
     # Export faces
     lines.append("# Faces")
     if include_mtl:
-        lines.append(f"usemtl crystal_material")
+        lines.append("usemtl crystal_material")
 
     for i, face in enumerate(faces):
         # OBJ uses 1-based indexing
@@ -179,7 +177,7 @@ def geometry_to_obj_with_groups(
     ]
 
     lines = [
-        f"# Wavefront OBJ export with face groups",
+        "# Wavefront OBJ export with face groups",
         f"# Crystal geometry: {name}",
         f"# Vertices: {len(vertices)}, Faces: {len(faces)}, Groups: {n_groups}",
         "",
@@ -210,11 +208,11 @@ def geometry_to_obj_with_groups(
         mat_name = f"material_{group_idx}"
         group_name = group_names[group_idx] if group_idx < len(group_names) else f"group_{group}"
 
-        lines.append(f"")
+        lines.append("")
         lines.append(f"g {group_name}")
         lines.append(f"usemtl {mat_name}")
 
-        for face_idx, (face, fg) in enumerate(zip(faces, face_groups)):
+        for face_idx, (face, fg) in enumerate(zip(faces, face_groups, strict=False)):
             if fg != group:
                 continue
 
@@ -233,7 +231,7 @@ def geometry_to_obj_with_groups(
         "",
     ]
 
-    for i, group in enumerate(unique_groups):
+    for i, _group in enumerate(unique_groups):
         color = colors[i % len(colors)]
         mtl_lines.extend(
             [

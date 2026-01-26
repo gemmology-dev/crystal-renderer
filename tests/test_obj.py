@@ -1,7 +1,6 @@
 """Tests for Wavefront OBJ export."""
 
 import numpy as np
-import pytest
 
 from crystal_renderer.formats.obj import (
     export_obj,

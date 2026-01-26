@@ -6,7 +6,6 @@ used by GemCad, Gem Cut Studio, and similar faceting software.
 """
 
 import math
-from typing import Any
 
 import numpy as np
 
@@ -42,7 +41,7 @@ def geometry_to_gemcad(
     """
     lines = [
         f"# GEMCAD design: {name}",
-        f"# Generated from crystal geometry",
+        "# Generated from crystal geometry",
     ]
 
     if system:

@@ -1,9 +1,6 @@
 """Tests for GEMCAD format export."""
 
-import math
-
 import numpy as np
-import pytest
 
 from crystal_renderer.formats.gemcad import (
     GEMSTONE_RI,

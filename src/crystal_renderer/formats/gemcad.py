@@ -189,7 +189,7 @@ def _detect_symmetry(face_normals: list[np.ndarray]) -> str | None:
     normals = [np.asarray(n) / np.linalg.norm(n) for n in face_normals]
 
     # Check for 6-fold symmetry (hexagonal)
-    azimuth_counts = {}
+    azimuth_counts: dict[int, int] = {}
     for n in normals:
         az = int(round(math.degrees(math.atan2(n[1], n[0])) / 60)) % 6
         azimuth_counts[az] = azimuth_counts.get(az, 0) + 1
@@ -199,7 +199,7 @@ def _detect_symmetry(face_normals: list[np.ndarray]) -> str | None:
             return "6"
 
     # Check for 4-fold symmetry (tetragonal)
-    azimuth_counts_4 = {}
+    azimuth_counts_4: dict[int, int] = {}
     for n in normals:
         az = int(round(math.degrees(math.atan2(n[1], n[0])) / 90)) % 4
         azimuth_counts_4[az] = azimuth_counts_4.get(az, 0) + 1
@@ -208,7 +208,7 @@ def _detect_symmetry(face_normals: list[np.ndarray]) -> str | None:
         return "4"
 
     # Check for 3-fold symmetry (trigonal)
-    azimuth_counts_3 = {}
+    azimuth_counts_3: dict[int, int] = {}
     for n in normals:
         az = int(round(math.degrees(math.atan2(n[1], n[0])) / 120)) % 3
         azimuth_counts_3[az] = azimuth_counts_3.get(az, 0) + 1

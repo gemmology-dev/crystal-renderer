@@ -70,6 +70,28 @@ def calculate_vertex_normals(vertices: np.ndarray, faces: list[list[int]]) -> np
     return normals
 
 
+def compute_polygon_edges(faces: list[list[int]]) -> list[list[int]]:
+    """Extract unique edges from original polygon faces.
+
+    These are the "real" crystal edges, not triangulation artifacts.
+
+    Args:
+        faces: List of polygon faces (each face is a list of vertex indices)
+
+    Returns:
+        List of edge pairs [v0, v1] where v0 < v1
+    """
+    edges = set()
+    for face in faces:
+        n = len(face)
+        for i in range(n):
+            v0, v1 = face[i], face[(i + 1) % n]
+            # Normalize edge direction for deduplication
+            edge = (min(v0, v1), max(v0, v1))
+            edges.add(edge)
+    return [list(e) for e in sorted(edges)]
+
+
 def geometry_to_gltf(
     vertices: np.ndarray,
     faces: list[list[int]],
@@ -85,8 +107,11 @@ def geometry_to_gltf(
         name: Mesh name
 
     Returns:
-        glTF JSON structure
+        glTF JSON structure with original polygon edges in extras
     """
+    # Extract original polygon edges before triangulation
+    original_edges = compute_polygon_edges(faces)
+
     # Triangulate all faces
     triangles = []
     for face in faces:
@@ -199,6 +224,11 @@ def geometry_to_gltf(
                 "alphaMode": "BLEND" if (color and color[3] < 1.0) else "OPAQUE",
             }
         ],
+        # Store original polygon edges for accurate edge rendering
+        # These are the "real" crystal edges, not triangulation artifacts
+        "extras": {
+            "crystalEdges": original_edges,
+        },
     }
 
     return gltf

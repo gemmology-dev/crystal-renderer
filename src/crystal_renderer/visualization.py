@@ -44,6 +44,7 @@ def generate_cdl_svg(
     info_fontsize: int = 10,
     figsize: tuple[int, int] = (10, 10),
     dpi: int = 150,
+    c_ratio: float | None = None,
 ) -> Path:
     """Generate SVG from Crystal Description Language notation.
 
@@ -62,6 +63,8 @@ def generate_cdl_svg(
         info_fontsize: Font size for info panel
         figsize: Figure size in inches
         dpi: Output resolution
+        c_ratio: c/a ratio for non-cubic systems (default: 1.1 for trigonal/hexagonal,
+                 1.0 for others). Use higher values for more elongated crystals.
 
     Returns:
         Path to output file
@@ -82,9 +85,17 @@ def generate_cdl_svg(
     description = parse_cdl(cdl_string)
     geometry = cdl_to_geometry(description)
 
+    # Detect amorphous and aggregate modes
+    is_amorphous = getattr(geometry, "is_amorphous", False)
+    aggregate_meta = getattr(geometry, "aggregate_metadata", None)
+
     # Get colours based on crystal system
     crystal_system = description.system
     default_colours = HABIT_COLOURS.get(crystal_system, HABIT_COLOURS["cubic"])
+
+    # Softer colours for amorphous shapes
+    if is_amorphous:
+        default_colours = {"face": "#B0BEC5", "edge": "#546E7A"}
 
     # Create figure
     fig = plt.figure(figsize=figsize)
@@ -93,7 +104,29 @@ def generate_cdl_svg(
     ax.view_init(elev=elev, azim=azim)
 
     # Draw faces
-    if color_by_form:
+    has_components = (
+        geometry.component_ids is not None
+        and len(set(geometry.component_ids)) > 1
+        and aggregate_meta is not None
+    )
+
+    if has_components and not color_by_form:
+        # Color each face by component_id (aggregate mode)
+        for i, face in enumerate(geometry.faces):
+            verts = [geometry.vertices[j] for j in face]
+            comp_id = geometry.component_ids[i] if geometry.component_ids else 0
+            colours = FORM_COLORS[comp_id % len(FORM_COLORS)]
+            # Simplify rendering for large aggregates
+            lw = 0.5 if aggregate_meta and aggregate_meta.n_instances > 20 else 1.5
+            poly = Poly3DCollection(
+                [verts],
+                alpha=0.7,
+                facecolor=colours["face"],
+                edgecolor=colours["edge"],
+                linewidth=lw,
+            )
+            ax.add_collection3d(poly)
+    elif color_by_form:
         # Color each face by its form
         for i, face in enumerate(geometry.faces):
             verts = [geometry.vertices[j] for j in face]
@@ -145,8 +178,8 @@ def generate_cdl_svg(
             zorder=5,
         )
 
-    # Add face labels if requested
-    if face_labels and hasattr(geometry, "face_millers") and geometry.face_millers:
+    # Add face labels if requested (skip for amorphous — no Miller indices)
+    if face_labels and not is_amorphous and hasattr(geometry, "face_millers") and geometry.face_millers:
         _add_face_labels(ax, geometry, elev, azim)
 
     # Draw axes
@@ -170,8 +203,11 @@ def generate_cdl_svg(
         hide_axes_and_grid(ax)
 
     # Create title from CDL
-    forms_str = " + ".join(str(f.miller) for f in description.forms)
-    title = f"{description.system.title()} [{description.point_group}] : {forms_str}"
+    if is_amorphous:
+        title = f"Amorphous (Schematic)"
+    else:
+        forms_str = " + ".join(str(f.miller) for f in description.forms)
+        title = f"{description.system.title()} [{description.point_group}] : {forms_str}"
     ax.set_title(title, fontsize=14, fontweight="bold")
 
     # Add legend for color-by-form mode

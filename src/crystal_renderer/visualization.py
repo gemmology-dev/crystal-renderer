@@ -211,19 +211,15 @@ def generate_cdl_svg(
     if is_amorphous:
         title = "Amorphous (Schematic)"
     elif hasattr(description, "forms") and hasattr(description, "point_group"):
-        forms_str = " + ".join(
-            str(f.miller)
-            for f in description.forms
-            if hasattr(f, "miller")  # type: ignore[union-attr]
-        )
-        title = f"{description.system.title()} [{description.point_group}] : {forms_str}"  # type: ignore[union-attr]
+        forms_str = " + ".join(str(f.miller) for f in description.forms if hasattr(f, "miller"))
+        title = f"{description.system.title()} [{description.point_group}] : {forms_str}"
     else:
         title = description.system.title()
     ax.set_title(title, fontsize=14, fontweight="bold")
 
     # Add legend for color-by-form mode
-    if color_by_form and hasattr(description, "forms") and len(description.forms) > 1:  # type: ignore[union-attr]
-        _add_form_legend(ax, description.forms)  # type: ignore[union-attr]
+    if color_by_form and hasattr(description, "forms") and len(description.forms) > 1:
+        _add_form_legend(ax, description.forms)
 
     # Clean up axes
     ax.set_xlabel("")

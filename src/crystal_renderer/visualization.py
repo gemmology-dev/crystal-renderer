@@ -204,7 +204,7 @@ def generate_cdl_svg(
 
     # Create title from CDL
     if is_amorphous:
-        title = f"Amorphous (Schematic)"
+        title = "Amorphous (Schematic)"
     else:
         forms_str = " + ".join(str(f.miller) for f in description.forms)
         title = f"{description.system.title()} [{description.point_group}] : {forms_str}"

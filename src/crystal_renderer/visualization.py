@@ -179,7 +179,12 @@ def generate_cdl_svg(
         )
 
     # Add face labels if requested (skip for amorphous — no Miller indices)
-    if face_labels and not is_amorphous and hasattr(geometry, "face_millers") and geometry.face_millers:
+    if (
+        face_labels
+        and not is_amorphous
+        and hasattr(geometry, "face_millers")
+        and geometry.face_millers
+    ):
         _add_face_labels(ax, geometry, elev, azim)
 
     # Draw axes

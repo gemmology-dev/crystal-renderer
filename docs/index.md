@@ -2,7 +2,10 @@
 
 **SVG and 3D Visualization** - Renders crystal structures from CDL notation with export to multiple formats including SVG, STL, and glTF.
 
-Part of the [Gemmology Project](https://gemmology.dev).
+!!! tip "Interactive companion"
+    See live examples in the [Crystal Gallery](https://gemmology.dev/gallery/),
+    experiment with CDL notation in the [CDL Playground](https://gemmology.dev/playground/),
+    or take a [practice quiz](https://gemmology.dev/quiz/) on related material.
 
 ## Overview
 
